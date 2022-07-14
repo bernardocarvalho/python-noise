@@ -16,7 +16,7 @@ from termux import API as api
 #	print("Hello World")
 
 def play_mp3():
-    path=os.getcwd() + r'/*.??3'
+    path=os.getcwd() + r'/sounds/*.??3'
     files = glob.glob(path)
     d=random.choice(files)
     #os.startfile(d)
