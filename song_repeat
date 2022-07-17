@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+##/usr/bin/python3
+# https://www.delftstack.com/howto/python/python-play-mp3/
+# https://schedule.readthedocs.io/en/stable/
+import os
+import sys, subprocess, re
+import random
+import glob
+import schedule
+import time
+from termux import API as api
+
+# from datetime import datetime, timedelta, time
+
+#path=os.getcwd() + r'/*.MP3'
+#def hello_world:
+#	print("Hello World")
+
+def wait_end():
+    err = subprocess.check_output(["termux-media-player", "info"])
+    out=err.decode()
+    status = re.split("\s", out)[0]
+    print(status)
+    if (status != r'No'):
+        return True
+    else:
+        return False
+
+def play_blocking(song):
+    path=os.getcwd()
+    file = path + song
+    # cmd = "termux-media-player play '" + file +"'"
+    err = subprocess.check_output(["termux-media-player", "play", file])
+#    out=err.decode()
+    while (wait_end()):
+        print("wainting")
+        time.sleep(5) 
+
+def play_silent():
+    path=os.getcwd()
+    # file = path + r'/silent/silent3.mp3'
+    file = path + r'/songs/01_Seattle.mp3'
+    song =r'/songs/01_Seattle.mp3'
+    play_blocking(song)
+    # cmd = "termux-media-player play '" + file +"'"
+#    err = subprocess.check_output(["termux-media-player", "play", file])
+    print("end song")
+    # os.system(cmd)
+    # api.generic(cmd)
+    file = path + r'/songs/02_Chutzpan.mp3'
+    song = r'/songs/02_Chutzpan.mp3'
+    # os.system(cmd)
+    #err = subprocess.check_output(["termux-media-player", "play", file])
+    play_blocking(song)
+
+if len(sys.argv)>1:
+    timee = str(sys.argv[1])
+else:
+    timee = r'01:00'
+
+# schedule.every(1).minutes.do(play_silent)
+schedule.every().day.at(timee).do(play_silent)
+
+# Run every 5 to 10 seconds.
+
+#schedule.every(1).to(4).seconds.until(timee).do(play_mp3)
+
+# play_mp3()
+# files=os.listdir(path)
+# while True:
+#    schedule.run_pending()
+#    time.sleep(1)
+
+while 1:
+    n = schedule.idle_seconds()
+    if n is None:
+        # no more jobs
+        break
+    elif n > 0:
+        # sleep exactly the right amount of time
+        print(F'Wait {n} seconds')
+        time.sleep(n)
+    schedule.run_pending()
