@@ -54,7 +54,7 @@ def play_blocking(song):
 #    out=err.decode()
     seconds = 10
     while (wait_end()):
-        print("wainting {seconds}"))
+        print("wainting {seconds}")
         time.sleep(seconds)
         get_volume()
 
