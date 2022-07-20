@@ -59,7 +59,10 @@ def play_blocking(song):
         get_volume()
 
 def play_random():
-    schedule.cancel_job(silent_job)
+    #schedulep.cancel_job(silent_job)
+    sil = schedule.get_jobs('silent')
+    schedule.cancel_job(sil)
+    # 
     files = get_songs()
     for i in range(2):
         #song = songs[i]
@@ -68,7 +71,8 @@ def play_random():
         play_blocking(song)
     # restart keep bluetooth connection
 
-    silent_job=schedule.every(1).minutes.do(play_silent)
+    #silent_job=schedule.every(1).minutes.do(play_silent)
+    schedule.every(1).minutes.do(play_silent).tag('alive-task', 'silent')
     #path=os.getcwd()
 
     # file = path + r'/silent/silent3.mp3'
@@ -94,6 +98,7 @@ def play_random():
 #    schedule.run_pending()
 #    time.sleep(1)
 
+silent_job=schedule.every(1).minutes.do(play_silent)
 # Defining main function
 def main():
     if len(sys.argv) > 1:
@@ -103,8 +108,7 @@ def main():
 
 # schedule.every(1).minutes.do(play_silent)
     schedule.every().day.at(time_start).do(play_random)
-
-    silent_job=schedule.every(1).minutes.do(play_silent)
+    schedule.every(1).minutes.do(play_silent).tag('alive-task', 'silent')
 
     while 1:
         n = schedule.idle_seconds()
