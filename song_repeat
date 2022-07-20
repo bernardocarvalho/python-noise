@@ -54,7 +54,7 @@ def play_blocking(song):
 #    out=err.decode()
     seconds = 10
     while (wait_end()):
-        print("wainting " + seconds)
+        print("wainting {seconds}"))
         time.sleep(seconds)
         get_volume()
 
@@ -98,7 +98,6 @@ def play_random():
 #    schedule.run_pending()
 #    time.sleep(1)
 
-silent_job=schedule.every(1).minutes.do(play_silent)
 # Defining main function
 def main():
     if len(sys.argv) > 1:
