@@ -8,13 +8,23 @@ import random
 import glob
 import schedule
 import time
-from termux import API as api
+# from termux import API as api
+import requests
+from bs4 import BeautifulSoup as BS
 
 # from datetime import datetime, timedelta, time
 
 #path=os.getcwd() + r'/*.MP3'
 #def hello_world:
 #	print("Hello World")
+
+VOL_URL = r'http://epics.ipfn.tecnico.ulisboa.pt/bs4.html'
+
+def get_volume():
+    page = requests.get(VOL_URL)
+    soup = BS(page.content, 'html.parser')
+# print(soup)
+    print(soup.title)
 
 def get_songs():
     path=os.getcwd() + r'/songs/*.??3'
@@ -23,7 +33,7 @@ def get_songs():
 
 def wait_end():
     err = subprocess.check_output(["termux-media-player", "info"])
-    out=err.decode()
+    out = err.decode()
     status = re.split("\s", out)[0]
     print(status)
     if (status != r'No'):
@@ -31,22 +41,34 @@ def wait_end():
     else:
         return False
 
+def play_silent():
+    path=os.getcwd()
+    file = path + r'/silent/silent3.mp3'
+    err = subprocess.check_output(["termux-media-player", "play", file])
+
 def play_blocking(song):
     # path=os.getcwd()
     # file = path + song
     # cmd = "termux-media-player play '" + file +"'"
     err = subprocess.check_output(["termux-media-player", "play", song])
 #    out=err.decode()
+    seconds = 10
     while (wait_end()):
-        print("wainting")
-        time.sleep(5) 
+        print("wainting " + seconds)
+        time.sleep(seconds)
+        get_volume()
 
 def play_random():
-    songs = get_songs()
+    schedule.cancel_job(silent_job)
+    files = get_songs()
     for i in range(2):
-        song = songs[i]
-        print(songs)
+        #song = songs[i]
+        song = random.choice(files)
+        print("playing " + song)
         play_blocking(song)
+    # restart keep bluetooth connection
+
+    silent_job=schedule.every(1).minutes.do(play_silent)
     #path=os.getcwd()
 
     # file = path + r'/silent/silent3.mp3'
@@ -63,9 +85,7 @@ def play_random():
     # os.system(cmd)
     #err = subprocess.check_output(["termux-media-player", "play", file])
 
-
 # Run every 5 to 10 seconds.
-
 #schedule.every(1).to(4).seconds.until(timee).do(play_mp3)
 
 # play_mp3()
@@ -83,6 +103,8 @@ def main():
 
 # schedule.every(1).minutes.do(play_silent)
     schedule.every().day.at(time_start).do(play_random)
+
+    silent_job=schedule.every(1).minutes.do(play_silent)
 
     while 1:
         n = schedule.idle_seconds()
