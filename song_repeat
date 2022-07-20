@@ -82,7 +82,7 @@ def main():
         time_start = r'19:00'
 
 # schedule.every(1).minutes.do(play_silent)
-    schedule.every().day.at(time_start).do(play_silent)
+    schedule.every().day.at(time_start).do(play_random)
 
     while 1:
         n = schedule.idle_seconds()
