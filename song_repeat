@@ -16,6 +16,11 @@ from termux import API as api
 #def hello_world:
 #	print("Hello World")
 
+def get_songs():
+    path=os.getcwd() + r'/songs/*.??3'
+    files = glob.glob(path)
+    return files
+
 def wait_end():
     err = subprocess.check_output(["termux-media-player", "info"])
     out=err.decode()
@@ -27,39 +32,37 @@ def wait_end():
         return False
 
 def play_blocking(song):
-    path=os.getcwd()
-    file = path + song
+    # path=os.getcwd()
+    # file = path + song
     # cmd = "termux-media-player play '" + file +"'"
-    err = subprocess.check_output(["termux-media-player", "play", file])
+    err = subprocess.check_output(["termux-media-player", "play", song])
 #    out=err.decode()
     while (wait_end()):
         print("wainting")
         time.sleep(5) 
 
-def play_silent():
-    path=os.getcwd()
+def play_random():
+    songs = get_songs()
+    for i in range(2):
+        song = songs[i]
+        print(songs)
+        play_blocking(song)
+    #path=os.getcwd()
+
     # file = path + r'/silent/silent3.mp3'
-    file = path + r'/songs/01_Seattle.mp3'
-    song =r'/songs/01_Seattle.mp3'
-    play_blocking(song)
+    #file = path + r'/songs/01_Seattle.mp3'
+    #song =r'/songs/01_Seattle.mp3'
+    # play_blocking(song)
     # cmd = "termux-media-player play '" + file +"'"
 #    err = subprocess.check_output(["termux-media-player", "play", file])
-    print("end song")
+    #print("end song")
     # os.system(cmd)
     # api.generic(cmd)
-    file = path + r'/songs/02_Chutzpan.mp3'
-    song = r'/songs/02_Chutzpan.mp3'
+    #file = path + r'/songs/02_Chutzpan.mp3'
+    #song = r'/songs/02_Chutzpan.mp3'
     # os.system(cmd)
     #err = subprocess.check_output(["termux-media-player", "play", file])
-    play_blocking(song)
 
-if len(sys.argv)>1:
-    timee = str(sys.argv[1])
-else:
-    timee = r'01:00'
-
-# schedule.every(1).minutes.do(play_silent)
-schedule.every().day.at(timee).do(play_silent)
 
 # Run every 5 to 10 seconds.
 
@@ -71,13 +74,28 @@ schedule.every().day.at(timee).do(play_silent)
 #    schedule.run_pending()
 #    time.sleep(1)
 
-while 1:
-    n = schedule.idle_seconds()
-    if n is None:
-        # no more jobs
-        break
-    elif n > 0:
+# Defining main function
+def main():
+    if len(sys.argv) > 1:
+        time_start = str(sys.argv[1])
+    else:
+        time_start = r'19:00'
+
+# schedule.every(1).minutes.do(play_silent)
+    schedule.every().day.at(time_start).do(play_silent)
+
+    while 1:
+        n = schedule.idle_seconds()
+        if n is None:
+            # no more jobs
+            break
+        elif n > 0:
         # sleep exactly the right amount of time
-        print(F'Wait {n} seconds')
-        time.sleep(n)
-    schedule.run_pending()
+            print(F'Wait {n} seconds')
+            time.sleep(n)
+        schedule.run_pending()
+
+# Using the special variable 
+# __name__
+if __name__=="__main__":
+    main()
