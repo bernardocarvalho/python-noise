@@ -12,8 +12,6 @@ import time
 import requests
 from bs4 import BeautifulSoup as BS
 
-# from datetime import datetime, timedelta, time
-
 #path=os.getcwd() + r'/*.MP3'
 #def hello_world:
 #	print("Hello World")
@@ -28,7 +26,7 @@ def get_volume():
         voli = vol.text
         print(f'Setting Vol = {voli}')
         err = subprocess.check_output(["termux-volume", "music", voli])
-    except (Exception, ConnectionEror) as e:
+    except (Exception, ConnectionError) as e:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(e).__name__, e.args)
         print ("excp")
