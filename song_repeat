@@ -18,13 +18,24 @@ from bs4 import BeautifulSoup as BS
 #def hello_world:
 #	print("Hello World")
 
-VOL_URL = r'http://epics.ipfn.tecnico.ulisboa.pt/bs4.html'
+VOL_URL = r'http://epics.iiipfn.tecnico.ulisboa.pt/volume.html'
 
 def get_volume():
-    page = requests.get(VOL_URL)
-    soup = BS(page.content, 'html.parser')
+    try:
+        page = requests.get(VOL_URL)
+        soup = BS(page.content, 'html.parser')
+        vol = soup.find(id="volume")
+        voli = vol.text
+        print(voli)
+        err = subprocess.check_output(["termux-volume", "music", voli])
+    except (Exception, ConnectionEror) as e:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(e).__name__, e.args)
+        print (message)
+
+
 # print(soup)
-    print(soup.title)
+#    print(soup.title)
 
 def get_songs():
     path=os.getcwd() + r'/songs/*.??3'
@@ -54,7 +65,7 @@ def play_blocking(song):
 #    out=err.decode()
     seconds = 10
     while (wait_end()):
-        print("wainting {seconds}")
+        print(f'wainting {seconds}')
         time.sleep(seconds)
         get_volume()
 
