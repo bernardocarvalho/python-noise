@@ -26,13 +26,13 @@ def get_volume():
         soup = BS(page.content, 'html.parser')
         vol = soup.find(id="volume")
         voli = vol.text
-        print(voli)
+        print(f'Setting Vol = {voli}')
         err = subprocess.check_output(["termux-volume", "music", voli])
     except (Exception, ConnectionEror) as e:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(e).__name__, e.args)
+        print ("excp")
         print (message)
-
 
 # print(soup)
 #    print(soup.title)
@@ -62,10 +62,9 @@ def play_blocking(song):
     # file = path + song
     # cmd = "termux-media-player play '" + file +"'"
     err = subprocess.check_output(["termux-media-player", "play", song])
-#    out=err.decode()
     seconds = 10
     while (wait_end()):
-        print(f'wainting {seconds}')
+        print(f'waiting {seconds}')
         time.sleep(seconds)
         get_volume()
 
@@ -75,14 +74,13 @@ def play_random():
     schedule.cancel_job(sil)
     # 
     files = get_songs()
-    for i in range(2):
+    # for i in range(2):
+    for f in files:
         #song = songs[i]
         song = random.choice(files)
         print("playing " + song)
         play_blocking(song)
     # restart keep bluetooth connection
-
-    #silent_job=schedule.every(1).minutes.do(play_silent)
     schedule.every(1).minutes.do(play_silent).tag('alive-task', 'silent')
     #path=os.getcwd()
 
